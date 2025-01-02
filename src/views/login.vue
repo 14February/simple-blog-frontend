@@ -4,19 +4,21 @@
             <n-form :model="admin" :rules="rules">
 
 
-    <n-form-item label="账号" path="account">
-      <n-input v-model:value="admin.account" placeholder="请输入账号" />
+    <n-form-item label="账号" path="name">
+      <n-input v-model:value="admin.name" placeholder="请输入账号" />
     </n-form-item>
     <n-form-item label="密码" path="password">
       <n-input v-model:value="admin.password" type="password" placeholder="请输入密码" />
     </n-form-item>
 </n-form>
+<div>{{ admin.remember }}</div>
     <template #footer>
         <n-checkbox v-model:checked="admin.remember" label="记住我"/>
         <n-button @click="login">登录</n-button>
     </template>
   
   </n-card>
+  
     </div>
 </template>
 
@@ -46,31 +48,33 @@ let rules = {
 };
 
 const admin = reactive({
-    account: localStorage.getItem("account") || "",
+    name: localStorage.getItem("name") || "",
     password: localStorage.getItem("password") || "",
-    remember: localStorage.getItem("remember") || false
+    remember: localStorage.getItem("remember") === 'true'
 })
 
 
 const login = async () => {
-    // let result = await axios.post("/admin/login", {
-    //     account: admin.account,
-    //     password: admin.password
-    // });
-    // console.log(result);
+    let result = await axios.post("/user/login", {
+        name: admin.name,
+        password: admin.password
+    });
+    console.log(result);
+    if (result.data == null || !result.data.isSuccess) {
+        message.error("登录失败");
+        return;
+    }
+
+    adminStore.name = admin.name;
+
     // 成功
     if (admin.remember) {
-        localStorage.setItem("account", admin.account)
+        localStorage.setItem("name", admin.name)
         localStorage.setItem("password", admin.password)
-        localStorage.setItem("remember", admin.remember)
+        localStorage.setItem("remember", admin.remember ? 'true' : 'false')
     }
     message.info("登录成功")
-    // adminStore.account = admin.account;
-    // adminStore.password = admin.password;
-    // adminStore.token = result.token;
     router.push("/dashboard")
-    // 失败
-    message.error("登录失败")
 }
 
 </script>

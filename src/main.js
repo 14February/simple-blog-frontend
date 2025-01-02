@@ -16,10 +16,12 @@ const app =  createApp(App)
 const { message, notification, dialog } = createDiscreteApi(
     ['message', 'dialog', 'notification'])
 
+// 全局提供属性
 app.provide("axios", axios)
 app.provide("message", message)
 app.provide("notification", notification)
 app.provide("dialog", dialog)
+app.provide("server_url", axios.defaults.baseURL )
 
 
 app.use(router)
